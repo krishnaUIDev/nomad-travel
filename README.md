@@ -19,31 +19,36 @@
 
 ```
 NomadTravel/
-├── App/
-│   ├── NomadTravelApp.swift      # Swift 6 App Entry Point
-│   └── AppState.swift            # Observable Global Navigation & Filter State
-├── DesignSystem/
-│   ├── Springs.swift             # Physics-based spring tokens (0-jank 120 FPS)
-│   ├── Colors.swift              # Dark mode glassmorphic color palette
-│   └── Haptics.swift             # Tactile sensory feedback generator
-├── Core/
-│   ├── Auth/
-│   │   └── AuthManager.swift     # Face ID / Touch ID, Email, & Google OAuth engine
-│   └── Location/
-│       └── LocationManager.swift # CoreLocation manager & distance matrix
-├── Models/
-│   ├── Stay.swift                # Co-living listing model & mock data
-│   ├── NomadSpot.swift           # Work-friendly cafe / co-working model
-│   └── UserNomadProfile.swift    # Digital nomad profile schema
-└── Features/
-    ├── Auth/
-    │   └── Views/LoginView.swift # Glassmorphic login with ambient gradient orbs
-    └── Stays/
-        └── Views/
-            ├── StaysMainView.swift  # MapKit Explorer + Sheet + Floating Tab Bar
-            ├── StayCardView.swift   # High-speed wifi stay card component
-            └── StayDetailView.swift # Interactive swipe-to-dismiss detail view
+├── Sources/
+│   └── NomadTravel/
+│       ├── App/
+│       │   ├── NomadTravelApp.swift      # Swift 6 App Entry Point
+│       │   └── AppState.swift            # Observable Global Navigation & Filter State
+│       ├── DesignSystem/
+│       │   ├── Springs.swift             # Physics-based spring tokens (0-jank 120 FPS)
+│       │   ├── Colors.swift              # Dark mode glassmorphic color palette
+│       │   ├── GlassmorphicCard.swift    # Native ultraThinMaterial frosted glass
+│       │   └── Haptics.swift             # Tactile sensory feedback generator
+│       ├── Core/
+│       │   ├── Auth/
+│       │   │   └── AuthManager.swift     # Face ID / Touch ID, Email, & Google OAuth engine
+│       │   └── Location/
+│       │       └── LocationManager.swift # CoreLocation manager & distance matrix
+│       ├── Models/
+│       │   ├── Stay.swift                # Co-living listing model & mock data
+│       │   ├── NomadSpot.swift           # Work-friendly cafe / co-working model
+│       │   └── UserNomadProfile.swift    # Digital nomad profile schema
+│       └── Features/
+│           ├── Auth/Views/LoginView.swift   # Glassmorphic login screen
+│           ├── Radar/Views/NomadRadarView.swift # Live proximity radar view
+│           ├── Visa/Views/VisaTrackerView.swift # Schengen 90/180 visa counter
+│           ├── Profile/Views/ProfileView.swift  # Nomad ID & settings view
+│           └── Stays/Views/
+│               ├── StaysMainView.swift  # MapKit Explorer + Sheet + Glass Tab Bar
+│               ├── StayCardView.swift   # High-speed wifi stay card component
+│               └── StayDetailView.swift # Interactive swipe-to-dismiss detail view
 ```
+
 
 ---
 
