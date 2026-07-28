@@ -190,3 +190,12 @@ struct CustomNomadTabBar: View {
         .padding(.horizontal, 24)
     }
 }
+
+#Preview("Stays Main View") {
+    StaysMainView()
+        .environmentObject(AppState())
+        .environmentObject(AuthManager())
+        .environmentObject(LocationManager())
+        .preferredColorScheme(.dark)
+}
+
