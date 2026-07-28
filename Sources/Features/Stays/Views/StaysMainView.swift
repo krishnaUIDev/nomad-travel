@@ -7,9 +7,11 @@ struct StaysMainView: View {
     @EnvironmentObject var locationManager: LocationManager
     
     @State private var stays: [Stay] = Stay.mockStays
-    @State private var mapRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: -8.6478, longitude: 115.1385), // Canggu, Bali
-        span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
+    @State private var cameraPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: -8.6478, longitude: 115.1385), // Canggu, Bali
+            span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
+        )
     )
     @State private var selectedFilterWifi: Double = 100.0
     
@@ -56,30 +58,32 @@ struct StaysMainView: View {
     
     // Main Explore Map View
     private var exploreMapView: some View {
-
         ZStack(alignment: .bottom) {
-            Map(coordinateRegion: $mapRegion, annotationItems: stays) { stay in
-                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: stay.latitude, longitude: stay.longitude)) {
-                    Button {
-                        appState.selectStay(stay)
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "wifi")
-                                .font(.system(size: 10, weight: .bold))
-                            Text("$\(Int(stay.pricePerNightUSD))")
-                                .font(.system(size: 13, weight: .black, design: .rounded))
+            Map(position: $cameraPosition) {
+                ForEach(stays) { stay in
+                    Annotation(stay.title, coordinate: CLLocationCoordinate2D(latitude: stay.latitude, longitude: stay.longitude)) {
+                        Button {
+                            appState.selectStay(stay)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "wifi")
+                                    .font(.system(size: 10, weight: .bold))
+                                Text("$\(Int(stay.pricePerNightUSD))")
+                                    .font(.system(size: 13, weight: .black, design: .rounded))
+                            }
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(NomadColors.wifiGreen)
+                            .cornerRadius(14)
+                            .shadow(color: NomadColors.wifiGreen.opacity(0.4), radius: 8, x: 0, y: 4)
+                            .scaleEffect(appState.selectedStay?.id == stay.id ? 1.2 : 1.0)
                         }
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(NomadColors.wifiGreen)
-                        .cornerRadius(14)
-                        .shadow(color: NomadColors.wifiGreen.opacity(0.4), radius: 8, x: 0, y: 4)
-                        .scaleEffect(appState.selectedStay?.id == stay.id ? 1.2 : 1.0)
                     }
                 }
             }
             .ignoresSafeArea()
+
             
             VStack(spacing: 0) {
                 // Top Floating Search Header (Airbnb Style)
