@@ -17,6 +17,11 @@ let package = Package(
         .target(
             name: "NomadTravel",
             path: "Sources"
+        ),
+        .testTarget(
+            name: "NomadTravelTests",
+            dependencies: ["NomadTravel"],
+            path: "Tests/NomadTravelTests"
         )
     ]
 )

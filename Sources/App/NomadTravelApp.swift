@@ -1,6 +1,5 @@
 import SwiftUI
 
-@main
 struct NomadTravelApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var authManager = AuthManager()
@@ -16,6 +15,8 @@ struct NomadTravelApp: App {
         }
     }
 }
+
+
 
 struct ContentView: View {
     @EnvironmentObject var authManager: AuthManager
