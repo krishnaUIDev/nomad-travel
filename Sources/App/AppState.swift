@@ -1,43 +1,43 @@
 import SwiftUI
-import Combine
 
-enum NomadTab: String, CaseIterable, Identifiable {
-    case explore = "Explore"
-    case radar = "Nomad Radar"
-    case visa = "Visa & Tax"
+public enum NomadTab: String, CaseIterable, Identifiable {
+    case discovery = "Discover"
+    case trips = "Trips"
+    case chat = "Chat"
+    case meetups = "Meetups"
     case profile = "Profile"
     
-    var id: String { rawValue }
+    public var id: String { rawValue }
     
-    var iconName: String {
+    public var iconName: String {
         switch self {
-        case .explore: return "map.fill"
-        case .radar: return "antenna.radiowaves.left.and.right"
-        case .visa: return "globe.europe.africa.fill"
+        case .discovery: return "sparkles.rectangle.stack.fill"
+        case .trips: return "airplane.departure"
+        case .chat: return "bubble.left.and.bubble.right.fill"
+        case .meetups: return "person.3.fill"
         case .profile: return "person.crop.circle.fill"
         }
     }
 }
 
 final class AppState: ObservableObject {
-    @Published var selectedTab: NomadTab = .explore
-    @Published var selectedStay: Stay? = nil
-    @Published var isDetailExpanded: Bool = false
-    @Published var minWifiMbpsFilter: Double = 50.0
+    @Published var selectedTab: NomadTab = .discovery
+    @Published var selectedUserForDetail: NomadUser? = nil
+    @Published var isProfileDetailExpanded: Bool = false
     @Published var isGhostModeActive: Bool = false
     
-    func selectStay(_ stay: Stay) {
+    func selectUserDetail(_ user: NomadUser) {
         withAnimation(NomadSprings.sharedElementSpring) {
-            self.selectedStay = stay
-            self.isDetailExpanded = true
+            self.selectedUserForDetail = user
+            self.isProfileDetailExpanded = true
         }
         NomadHaptics.impact(.medium)
     }
     
-    func dismissStayDetail() {
+    func dismissUserDetail() {
         withAnimation(NomadSprings.fluidSpring) {
-            self.isDetailExpanded = false
-            self.selectedStay = nil
+            self.isProfileDetailExpanded = false
+            self.selectedUserForDetail = nil
         }
         NomadHaptics.impact(.light)
     }
