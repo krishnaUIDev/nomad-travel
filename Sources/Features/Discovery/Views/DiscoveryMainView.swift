@@ -365,3 +365,11 @@ struct CustomSocialTabBar: View {
     }
 }
 
+#Preview("Social Discovery Stack") {
+    DiscoveryMainView()
+        .environmentObject(AppState())
+        .environmentObject(LocationManager())
+        .preferredColorScheme(.dark)
+}
+
+
