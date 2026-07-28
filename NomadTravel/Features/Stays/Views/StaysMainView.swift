@@ -11,7 +11,6 @@ struct StaysMainView: View {
         center: CLLocationCoordinate2D(latitude: -8.6478, longitude: 115.1385), // Canggu, Bali
         span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
     )
-    @State private var searchText: String = ""
     @State private var selectedFilterWifi: Double = 100.0
     
     var body: some View {
@@ -19,7 +18,46 @@ struct StaysMainView: View {
             NomadColors.background
                 .ignoresSafeArea()
             
-            // Map Explorer Background Layer
+            // Tab Content Switcher
+            Group {
+                switch appState.selectedTab {
+                case .explore:
+                    exploreMapView
+                case .radar:
+                    NomadRadarView()
+                case .visa:
+                    VisaTrackerView()
+                case .profile:
+                    ProfileView()
+                }
+            }
+            .transition(.opacity)
+            
+            // Custom Floating Nomad Glass Tab Bar
+            CustomNomadTabBar()
+                .padding(.bottom, 24)
+            
+            // Full Screen Expandable Detail Overlay
+            if appState.isDetailExpanded, let stay = appState.selectedStay {
+                StayDetailView(stay: stay) {
+                    appState.dismissStayDetail()
+                }
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .scale(scale: 0.96)),
+                    removal: .opacity.combined(with: .scale(scale: 0.96))
+                ))
+                .zIndex(10)
+            }
+        }
+        .onAppear {
+            locationManager.requestLocationPermission()
+        }
+    }
+    
+    // Main Explore Map View
+    private var exploreMapView: some View {
+
+        ZStack(alignment: .bottom) {
             Map(coordinateRegion: $mapRegion, annotationItems: stays) { stay in
                 MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: stay.latitude, longitude: stay.longitude)) {
                     Button {
@@ -43,7 +81,6 @@ struct StaysMainView: View {
             }
             .ignoresSafeArea()
             
-            // Main Bottom Sheet & Listing Carousel
             VStack(spacing: 0) {
                 // Top Floating Search Header (Airbnb Style)
                 HStack(spacing: 12) {
@@ -64,12 +101,8 @@ struct StaysMainView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(NomadColors.cardBackground.opacity(0.92))
-                    .cornerRadius(24)
-                    .overlay(RoundedRectangle(cornerRadius: 24).stroke(NomadColors.glassBorder, lineWidth: 1))
-                    .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
+                    .glassmorphicCard(cornerRadius: 24)
                     
-                    // Filter Pill Button
                     Button {
                         NomadHaptics.selection()
                     } label: {
@@ -77,9 +110,7 @@ struct StaysMainView: View {
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .padding(14)
-                            .background(NomadColors.cardBackground.opacity(0.92))
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(NomadColors.glassBorder, lineWidth: 1))
+                            .glassmorphicCard(cornerRadius: 24)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -90,7 +121,6 @@ struct StaysMainView: View {
                 // Listing Carousel Feed
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 20) {
-                        // Drag Indicator Handle
                         Capsule()
                             .fill(Color.white.opacity(0.3))
                             .frame(width: 40, height: 5)
@@ -117,30 +147,10 @@ struct StaysMainView: View {
                     .padding(.bottom, 110)
                 }
                 .frame(maxHeight: 460)
-                .background(NomadColors.background.opacity(0.95))
+                .background(NomadColors.background.opacity(0.92))
                 .clipShape(UnevenRoundedRectangle(topLeadingRadius: 32, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 32))
                 .shadow(color: Color.black.opacity(0.5), radius: 20, x: 0, y: -10)
-
             }
-            
-            // Custom Floating Nomad Glass Tab Bar
-            CustomNomadTabBar()
-                .padding(.bottom, 24)
-            
-            // Full Screen Expandable Detail Overlay
-            if appState.isDetailExpanded, let stay = appState.selectedStay {
-                StayDetailView(stay: stay) {
-                    appState.dismissStayDetail()
-                }
-                .transition(.asymmetric(
-                    insertion: .opacity.combined(with: .scale(scale: 0.96)),
-                    removal: .opacity.combined(with: .scale(scale: 0.96))
-                ))
-                .zIndex(10)
-            }
-        }
-        .onAppear {
-            locationManager.requestLocationPermission()
         }
     }
 }
@@ -172,36 +182,7 @@ struct CustomNomadTabBar: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 4)
-        .background(NomadColors.cardBackground.opacity(0.92))
-        .cornerRadius(32)
-        .overlay(RoundedRectangle(cornerRadius: 32).stroke(NomadColors.glassBorder, lineWidth: 1))
+        .glassmorphicCard(cornerRadius: 32)
         .padding(.horizontal, 24)
-        .shadow(color: Color.black.opacity(0.4), radius: 16, x: 0, y: 8)
     }
 }
-
-#if canImport(UIKit)
-import UIKit
-
-// Corner radius extension helper
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
-#endif
-
